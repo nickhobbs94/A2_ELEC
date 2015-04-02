@@ -19,7 +19,7 @@ int command_interpreter(int argc, char* argv[]){
         char *command_string;
         int (*command_function)(int argc, char* argv[]);
     } terminal_commands[] = {
-        {"echo",echo}, {NULL,NULL}
+        {"echo",echo}, {"add",add}, {NULL,NULL}
     };
     
     int i;
