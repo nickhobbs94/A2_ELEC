@@ -2,7 +2,7 @@
 #include "terminalParse.h"
 
 int main(int argc, char* argv[]){
-    char string[] = " add  1 2 3 4 ";
+    char string[] = "add 12 24";
     char** array_of_words;
     array_of_words = malloc(STRING_PARSER_MAXNUM_WORDS(string));
     //printf("Strlen: %lu ------- Pointer: %lu\n",STRING_PARSER_MAXNUM_WORDS(string),(unsigned long) array_of_words);

@@ -27,6 +27,7 @@ int add(int argc, char* argv[]){
             return -1;
         }
         sum += temp;
+        
     }
     
     
