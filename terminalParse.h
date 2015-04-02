@@ -1,12 +1,35 @@
 /*
-wordsplit.h
+terminalParse.h
 */
-#ifndef WORDSPLIT_H
-#define WORDSPLIT_H
+#ifndef TERMINALPARSE_H
+#define TERMINALPARSE_H
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "terminalFunctions.h"
 #define STRING_PARSER_MAXNUM_WORDS(string) strlen(string)/2+1
+
+/* Function prototypes */
+char string_parser(char* string, char* array_of_words[]);
+int command_interpreter(int argc, char* argv[]);
+
+/* Functions */
+int command_interpreter(int argc, char* argv[]){
+    struct terminal_functions {
+        char *command_string;
+        int (*command_function)(int argc, char* argv[]);
+    } terminal_commands[] = {
+        {"echo",echo}, {NULL,NULL}
+    };
+    
+    int i;
+    for (i=0; terminal_commands[i].command_string != NULL; i++){
+        if (strcmp(terminal_commands[i].command_string, argv[0]) == 0){
+            terminal_commands[i].command_function(argc, argv);
+        }
+    }
+    return 0;
+}
 
 
 /*
@@ -42,3 +65,4 @@ char string_parser(char* string, char* array_of_words[]){
 }
 
 #endif
+
