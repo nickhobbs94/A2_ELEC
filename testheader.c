@@ -2,9 +2,6 @@
 #include "wordsplit.h"
 
 int main(int argc, char* argv[]){
-    /*for (int i=0; i<argc; i++){
-        printf("%s\n",argv[i]);
-    }*/
     char string[] = " Hello world other words :)";
     char** array_of_words;
     array_of_words = malloc(STRING_PARSER_MAXNUM_WORDS(string));
@@ -23,7 +20,3 @@ int main(int argc, char* argv[]){
 
 
 
-
-/*
-a b c d e
-*/
