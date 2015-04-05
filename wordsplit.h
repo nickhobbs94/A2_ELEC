@@ -6,7 +6,7 @@ wordsplit.h
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define STRING_PARSER_MAXNUM_WORDS(string) strlen(string)/2+1
+#define STRING_PARSER_MAXNUM_WORDS(stringlength) stringlength/2+1
 
 
 /*
