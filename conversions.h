@@ -4,9 +4,11 @@
 #define CONVERSIONS_H
 #include <math.h>
 #include <string.h>
+#define BINARY_DIVISOR 2
 
 /* Function prototypes */
 int intfromstring(char string[]);
+void decimaltobinary(int*binaryArray, int decimal);
 
 /* Functions */
 int intfromstring(char string[]){
@@ -24,6 +26,14 @@ int intfromstring(char string[]){
         place++;
     }
     return result;
+}
+
+void decimaltobinary(int* binaryArray, int decimal){
+    int i;
+    for(i=0; decimal>0; i++){
+        binaryArray[i] = (decimal % BINARY_DIVISOR);
+        decimal /= BINARY_DIVISOR;
+    }
 }
 
 #endif
