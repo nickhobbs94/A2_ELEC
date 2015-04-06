@@ -19,7 +19,7 @@ int command_interpreter(int argc, char* argv[]){
         char *command_string;
         int (*command_function)(int argc, char* argv[]);
     } terminal_commands[] = {
-        {"echo",echo}, {"add",add}, {NULL,NULL}
+        {"echo",echo}, {"add",add}, {"ledr",ledr}, {NULL,NULL}
     };
     
     int i;
@@ -49,7 +49,8 @@ char string_parser(char* string, char* array_of_words[]){
         count++;
         array_of_words[0] = string;
     }
-    for (int i=0; i<string_length; i++){    // incrememnt through each character of the string
+    int i;
+    for (i=0; i<string_length; i++){    // incrememnt through each character of the string
         if (*(string+i)==' '){    // if the current character is a space
             *(string+i)='\0';     // then replace the space with a null terminator
             // and if the following character is not the null terminator or another space
