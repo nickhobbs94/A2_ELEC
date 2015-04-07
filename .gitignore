@@ -1,3 +1,13 @@
+obj/
+
 *.out
 .DS_Store
+.cproject
+.force_relink
+.project
+*.elf
+*.map
+*.objdump
+create-this-app
+Makefile
 
