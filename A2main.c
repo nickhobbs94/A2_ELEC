@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "wordsplit.h"
+#include "terminalParse.h"
 #include "alt_types.h"
 
 #define PUTTY_LINE_LENGTH 50
@@ -9,17 +9,16 @@
 
 alt_32 puttyGetline(alt_8 string[], alt_32 lineLength);
 
+
 int main() {
-	alt_32 i=0;
-	alt_8 string[PUTTY_LINE_LENGTH];
-	
-	alt_32 stringlength = puttyGetline(string,PUTTY_LINE_LENGTH);
-	alt_8** array_of_words;
-	array_of_words = malloc(STRING_PARSER_MAXNUM_WORDS(stringlength));
-	alt_8 numwords = string_parser(string,array_of_words);
-	
-	for (i=0;i<numwords;i++){
-		printf("%s\n",*(array_of_words+i));
+	while(1){
+		alt_8 string[PUTTY_LINE_LENGTH];
+		alt_32 stringlength = puttyGetline(string,PUTTY_LINE_LENGTH);
+		alt_8** array_of_words;
+		array_of_words = malloc(STRING_PARSER_MAXNUM_WORDS(stringlength));
+		alt_8 numwords = string_parser(string,array_of_words);
+		command_interpreter(numwords, array_of_words);
+		free(array_of_words);
 	}
 	return 0;
 }
@@ -30,6 +29,11 @@ alt_32 puttyGetline(alt_8 string[], alt_32 lineLength){
     
     do {
         read(uart_pointer,&string[i],1);
+        if (string[i]=='\r'){
+        	string[i]='\n';
+        	write(uart_pointer,&string[i],1);
+        	string[i]='\r';
+        }
         write(uart_pointer,&string[i],1);
         i++;
     } while(string[i-1]!='\r' && i<lineLength); // loop until newline or line length is reached
