@@ -6,27 +6,28 @@ wordsplit.h
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "alt_types.h"
 #define STRING_PARSER_MAXNUM_WORDS(stringlength) stringlength/2+1
 
-char string_parser(char* string, char* array_of_words[]);
+alt_8 string_parser(alt_8* string, alt_8* array_of_words[]);
 /*
-USAGE: char string_parser(char* string, char* array_of_words[]);
+USAGE: alt_8 string_parser(alt_8* string, alt_8* array_of_words[]);
 GOTCHAS: the size of array_of_words should be malloc'd to be able to hold all the words, use at your own risk
 SUGGESTION: use STRING_PARSER_MAXNUM_WORDS(string) to return the suggested size of array_of_words
 */
-char string_parser(char* string, char* array_of_words[]){
+alt_8 string_parser(alt_8* string, alt_8* array_of_words[]){
     if (*(string)=='\0'){
         printf("ERROR: Empty string\n");
         return 0;   // return 0 if empty string
     }
-    int count = 0;
-    int string_length = strlen(string);
+    alt_32 count = 0;
+    alt_32 string_length = strlen(string);
     
     if (*(string)!=' '){    // if the first character is not a space then start the first word there
         count++;
         array_of_words[0] = string;
     }
-    int i;
+    alt_32 i;
     for (i=0; i<string_length; i++){    // incrememnt through each character of the string
         if (*(string+i)==' '){    // if the current character is a space
             *(string+i)='\0';     // then replace the space with a null terminator

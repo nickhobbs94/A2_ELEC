@@ -2,22 +2,21 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "wordsplit.h"
+#include "alt_types.h"
 
 #define PUTTY_LINE_LENGTH 50
 
-//typedef char alt_8;
-//typedef int alt_32;
 
-int puttyGetline(char string[], int lineLength);
+alt_32 puttyGetline(alt_8 string[], alt_32 lineLength);
 
-int main(int argc, char* argv[]) {
-	int i=0;
-	char string[PUTTY_LINE_LENGTH];
+int main() {
+	alt_32 i=0;
+	alt_8 string[PUTTY_LINE_LENGTH];
 	
-	int stringlength = puttyGetline(string,PUTTY_LINE_LENGTH);
-	char** array_of_words;
+	alt_32 stringlength = puttyGetline(string,PUTTY_LINE_LENGTH);
+	alt_8** array_of_words;
 	array_of_words = malloc(STRING_PARSER_MAXNUM_WORDS(stringlength));
-	char numwords = string_parser(string,array_of_words);
+	alt_8 numwords = string_parser(string,array_of_words);
 	
 	for (i=0;i<numwords;i++){
 		printf("%s\n",*(array_of_words+i));
@@ -25,9 +24,9 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
-int puttyGetline(char string[], int lineLength){
-    int i=0;
-    int uart_pointer = open("/dev/uart_0", O_RDWR, O_NONBLOCK);
+alt_32 puttyGetline(alt_8 string[], alt_32 lineLength){
+    alt_32 i=0;
+    alt_32 uart_pointer = open("/dev/uart_0", O_RDWR, O_NONBLOCK);
     
     do {
         read(uart_pointer,&string[i],1);
