@@ -8,7 +8,7 @@ wordsplit.h
 #include <stdlib.h>
 #define STRING_PARSER_MAXNUM_WORDS(stringlength) stringlength/2+1
 
-
+char string_parser(char* string, char* array_of_words[]);
 /*
 USAGE: char string_parser(char* string, char* array_of_words[]);
 GOTCHAS: the size of array_of_words should be malloc'd to be able to hold all the words, use at your own risk
@@ -19,7 +19,7 @@ char string_parser(char* string, char* array_of_words[]){
         printf("ERROR: Empty string\n");
         return 0;   // return 0 if empty string
     }
-    unsigned char count = 0;
+    int count = 0;
     int string_length = strlen(string);
     
     if (*(string)!=' '){    // if the first character is not a space then start the first word there
