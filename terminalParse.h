@@ -20,7 +20,7 @@ alt_32 command_interpreter(alt_32 argc, alt_8* argv[]){
         alt_u8* command_string;
         alt_32 (*command_function)(alt_32 argc, alt_8* argv[]);
     } terminal_commands[] = {
-        {"echo",echo}, {"add",add}, {"ledr",ledr}, {NULL,NULL}
+        {"echo",echo}, {"add",add}, {"ledr",ledr}, {"switch",switch_function}, {NULL,NULL}
     };
     
     alt_32 i;
