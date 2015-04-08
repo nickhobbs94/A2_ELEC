@@ -33,12 +33,19 @@ alt_32 puttyGetline(alt_8 string[], alt_32 lineLength){
         	string[i]='\n';
         	write(uart_pointer,&string[i],1);
         	string[i]='\r';
+        	write(uart_pointer,&string[i],1);
+        } else if (string[i]==0x7f){
+        	//string[i]='\0';
+        	write(uart_pointer,&string[i],1);
+            i=i-2;
+        } else {
+            write(uart_pointer,&string[i],1);
         }
-        write(uart_pointer,&string[i],1);
         i++;
     } while(string[i-1]!='\r' && i<lineLength); // loop until newline or line length is reached
     
     string[i-1]='\0'; // null terminate the string
+    printf("%s\n",string);
     close(uart_pointer);
     return i;
 }

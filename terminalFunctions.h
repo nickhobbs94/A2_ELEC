@@ -57,16 +57,17 @@ alt_32 ledr(alt_32 argc, alt_8* argv[]){
 alt_32 switch_function(alt_32 argc, char* argv[]){
 	alt_32 dec = IORD(SWITCH_PIO_BASE,0);
 	alt_32 i;
-	alt_32* hex=calloc(HEX_DIGIT_IN_DECIMAL(dec),sizeof(alt_32));
+	alt_32* hex=calloc(8,sizeof(alt_32));
 	decimaltohex(hex,dec);
 	static alt_u8  Map[] = {
 	        63, 6, 91, 79, 102, 109, 125, 7,
 	        127, 111, 119, 124, 57, 94, 121, 113
 	   };  // 0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f
-	 for(i=0;i<HEX_DIGIT_IN_DECIMAL(dec);++i) {
-		 printf("%x\n",hex[i]);
+	 for(i=0;i<8;++i) {
+		 //printf("%x\n",hex[i]);
 			IOWR(SEG7_DISPLAY_BASE,i,Map[hex[i]]);
 	}
+	free(hex);
 }
 
 #endif
