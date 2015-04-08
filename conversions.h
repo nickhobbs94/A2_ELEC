@@ -21,20 +21,35 @@ void decimaltohex(alt_32* hexArray, alt_32 decimal);
 
 /* ----------------------------------- Functions ----------------------------------- */
 
-alt_32 intfromstring(alt_8 string[]){
+alt_8 intfromstring(alt_8 string[]) {
 	alt_32 result=0;
+	alt_8 negative_flag = 0;
 	
-	alt_32 i;
-	alt_32 place=0;
-	for (i=strlen(string)-1; i>=0; i--){
-		
-		if (string[i]<'0' || string[i] > '9'){
-			return -1;
-		}
-		
-		result += string[i] % 0x10 * pow(10,place);
-		place++;
+	/* If the string starts with a + or - then increment the pointer of the string so as to ignore it */
+	if (string[0]=='+'){
+		string+=1;
+	} else if (string[0]=='-'){
+		negative_flag = 1;
+		string+=1;
 	}
+	
+	alt_32 stringlength = strlen(string);
+	alt_32 i;
+	
+	
+	for (i = 0; i<stringlength; i++){
+		if (string[i] < '0' || string[i] > '9') {
+			return 0; // return 0 if a non number is read from the string (check the user didnt just type 0)
+		}
+		result = result * 10;
+		result = result + (string[i] & 0x0f);
+	}
+	
+	/* Interpret sign */
+	if (negative_flag == 1){
+		result = result * -1;
+	}
+	
 	return result;
 }
 
