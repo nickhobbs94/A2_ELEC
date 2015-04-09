@@ -22,7 +22,7 @@ alt_32 command_interpreter(alt_32 argc, alt_8* argv[]);
 
 alt_32 command_interpreter(alt_32 argc, alt_8* argv[]){
 	struct terminal_functions {
-		alt_u8* command_string;
+		alt_8* command_string;
 		alt_32 (*command_function)(alt_32 argc, alt_8* argv[]);
 	} terminal_commands[] = {
 		/* 
@@ -36,10 +36,10 @@ alt_32 command_interpreter(alt_32 argc, alt_8* argv[]){
 		{NULL,NULL} // This null function is to check we've read all the functions, new functions must go above it.
 	};
 	
-	alt_32 i;
+	int i;
 	/* loops through the terminal commands and compares to the input arg */
 	for (i=0; terminal_commands[i].command_string != NULL; i++) {
-		if (strcmp(terminal_commands[i].command_string, argv[0]) == 0){
+		if (strcmp(terminal_commands[i].command_string, (char*)argv[0]) == 0){
 			terminal_commands[i].command_function(argc, argv);
 		}
 	}

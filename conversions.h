@@ -18,10 +18,11 @@
 alt_32 intfromstring(alt_8 string[]);
 void decimaltobinary(alt_32* binaryArray, alt_32 decimal);
 void decimaltohex(alt_32* hexArray, alt_32 decimal);
+alt_8 charfromint(alt_32 number);
 
 /* ----------------------------------- Functions ----------------------------------- */
 
-alt_8 intfromstring(alt_8 string[]) {
+alt_32 intfromstring(alt_8 string[]) {
 	alt_32 result=0;
 	alt_8 negative_flag = 0;
 	
@@ -33,7 +34,7 @@ alt_8 intfromstring(alt_8 string[]) {
 		string+=1;
 	}
 	
-	alt_32 stringlength = strlen(string);
+	alt_32 stringlength = strlen((char*)string);
 	alt_32 i;
 	
 	
@@ -51,6 +52,16 @@ alt_8 intfromstring(alt_8 string[]) {
 	}
 	
 	return result;
+}
+
+alt_8 charfromint(alt_32 number){
+//	alt_8 answer;
+	if (number < 0 || number > 9){
+		return -1;
+	}
+
+	alt_8 lookup_table[]={'0','1','2','3','4','5','6','7','8','9'};
+	return lookup_table[number];
 }
 
 void decimaltobinary(alt_32* binaryArray, alt_32 decimal){

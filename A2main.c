@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include "terminalParse.h"
 #include "alt_types.h"
+#include "LCD_Control.h"
 
 /* Magic numbers */
 #define PUTTY_LINE_LENGTH 50   // max line length able to be entered into putty
@@ -20,6 +21,9 @@ alt_32 puttyGetline(alt_8 string[], alt_32 lineLength);
 /* ----------------------------------- Functions ----------------------------------- */
 
 int main() {
+
+	  //LCD_Init();
+
 	while(1){
 		alt_8 string[PUTTY_LINE_LENGTH];
 		alt_32 stringlength = puttyGetline(string,PUTTY_LINE_LENGTH);

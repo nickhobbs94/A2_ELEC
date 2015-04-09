@@ -14,6 +14,7 @@
 #include "io.h"
 #include "system.h"
 #include "alt_types.h"
+#include "LCD_Control.h"
 
 /* Magic numbers */
 #define NUMBER_OF_LEDS 18
@@ -29,10 +30,13 @@ alt_32 switch_function(alt_32 argc, char* argv[]);
 
 alt_32 echo(alt_32 argc, alt_8* argv[]){
 	alt_32 i;
+	LCD_Init();
 	for (i=1; i<argc; i++){
-		printf("%s ",argv[i]);
+		//printf("%s ",argv[i]);
+		LCD_Show_Text((char*)argv[i]);
+		LCD_Show_Text(" ");
 	}
-	printf("\n");
+	//printf("\n");
 	return 0;
 }
 
@@ -40,7 +44,11 @@ alt_32 add(alt_32 argc, alt_8* argv[]){
 	alt_32 sum=0;
 	alt_32 i;
 	alt_32 temp;
+	LCD_Init();
 	for (i=1; i<argc; i++){
+		LCD_Show_Text((char*)argv[i]);
+		if (i<argc-1) LCD_Show_Text("+");
+
 		temp = intfromstring(argv[i]);
 		if (temp == -1){
 			return -1;
@@ -48,13 +56,16 @@ alt_32 add(alt_32 argc, alt_8* argv[]){
 		sum += temp;
 		
 	}
-	printf("%d\n",(int)sum);
+	//printf("%d\n",(int)sum);
+
+	LCD_Show_Text("=");
+	LCD_Show_Decimal(sum);
 	return 0;
 }
 
 alt_32 ledr(alt_32 argc, alt_8* argv[]){
 	alt_32 i;
-	alt_32 dec;
+	alt_32 dec=0;
 	for (i=1; i<argc; i++){
 		dec = intfromstring(argv[i]);
 		if (dec == -1){
@@ -79,6 +90,7 @@ alt_32 switch_function(alt_32 argc, char* argv[]){
 		IOWR(SEG7_DISPLAY_BASE,i,Map[hex[i]]);
 	}
 	free(hex);
+	return 0;
 }
 
 #endif
