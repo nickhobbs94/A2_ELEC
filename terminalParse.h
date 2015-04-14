@@ -33,6 +33,7 @@ alt_32 command_interpreter(alt_32 argc, alt_8* argv[]){
 		{"add",add}, 
 		{"ledr",ledr}, 
 		{"switch",switch_function}, 
+		{"ls",lsroot},
 		{NULL,NULL} // This null function is to check we've read all the functions, new functions must go above it.
 	};
 	
