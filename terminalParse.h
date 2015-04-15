@@ -39,7 +39,7 @@ alt_32 command_interpreter(alt_32 argc, alt_8* argv[]){
 		{"cd",change_dir},
 		{"mkdir",make_directory},
 		{"del",delete_file},
-		{"wfile",write_new_file},
+		{"mkfile",write_new_file},
 		{"cp",copy_file},
 		{"cat",read_file},
 		{NULL,NULL} // This null function is to check we've read all the functions, new functions must go above it.

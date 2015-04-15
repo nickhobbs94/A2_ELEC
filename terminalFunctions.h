@@ -32,11 +32,9 @@ alt_32 ls_path(alt_32 argc, alt_8* argv[]);
 alt_32 change_dir(alt_32 argc, alt_8* argv[]);
 alt_32 tf_mount(alt_32 argc, alt_8* argv[]);
 alt_32 tf_unmount(alt_32 argc, alt_8* argv[]);
-
 alt_32 make_directory(alt_32 argc, char* argv[]);
 alt_32 delete_file(alt_32 argc, char* argv[]);
 alt_32 write_new_file(alt_32 argc, char* argv[]);
-
 alt_32  read_file(alt_32 argc, char* argv[]);
 alt_32  copy_file(alt_32 argc, char* argv[]);
 
@@ -184,7 +182,6 @@ alt_32 tf_unmount(alt_32 argc, alt_8* argv[]){
 	return 0;
 }
 
-/* -------------- begin merge ---------------------- */
 
 alt_32 make_directory(alt_32 argc, char* argv[]){
 	EmbeddedFileSystem* efsl;
