@@ -35,7 +35,7 @@ alt_32 tf_unmount(alt_32 argc, alt_8* argv[]);
 
 alt_32 make_directory(alt_32 argc, char* argv[]);
 alt_32 delete_file(alt_32 argc, char* argv[]);
-alt_32 write_new_file(alt_32 argc, char* argv[])
+alt_32 write_new_file(alt_32 argc, char* argv[]);
 
 /* ----------------------------------- Functions ----------------------------------- */
 
@@ -187,13 +187,13 @@ alt_32 make_directory(alt_32 argc, char* argv[]){
 	EmbeddedFileSystem* efsl;
 	DirList list;
 
-	efsl = SD_mount();
+	efsl = *(SD_mount());
 
 	if (efsl==NULL)
 		return -1;
 
 	/* Get absolute path */
-	char path[LS_MAX_PATHLENGTH];
+	char path[SD_MAX_PATH_LENGTH];
 	memset(path,'\0',sizeof(path));
 	strcpy(path,argv[1]);
 	if (argc==3){
@@ -206,7 +206,7 @@ alt_32 make_directory(alt_32 argc, char* argv[]){
 		printf("This directory already exists\n");
 	}
 
-	SD_unmount();
+	//SD_unmount();
 
 	return 0;
 }
@@ -215,13 +215,13 @@ alt_32 delete_file(alt_32 argc, char* argv[]){
 	EmbeddedFileSystem* efsl;
 	DirList list;
 
-	efsl = SD_mount();
+	efsl = *(SD_mount());
 
 	if (efsl==NULL)
 		return -1;
 
 	/* Get absolute path */
-	char path[LS_MAX_PATHLENGTH];
+	char path[SD_MAX_PATH_LENGTH];
 	memset(path,'\0',sizeof(path));
 	strcpy(path,argv[1]);
 	if (argc==3){
@@ -230,7 +230,7 @@ alt_32 delete_file(alt_32 argc, char* argv[]){
 	}
 	rmfile(&(efsl->myFs), path);
 
-	SD_unmount();
+	//SD_unmount();
 
 	return 0;
 }
@@ -241,13 +241,13 @@ alt_32 write_new_file(alt_32 argc, char* argv[]){
 	File file;
 	euint8 *write_buffer="Text text text words";
 
-	efsl = SD_mount();
+	efsl = *(SD_mount());
 
 	if (efsl==NULL)
 		return -1;
 
 	/* Get absolute path */
-	char path[LS_MAX_PATHLENGTH];
+	char path[SD_MAX_PATH_LENGTH];
 	memset(path,'\0',sizeof(path));
 	strcpy(path,argv[1]);
 	if (argc==3){
@@ -267,7 +267,7 @@ alt_32 write_new_file(alt_32 argc, char* argv[]){
 	}
 
 	file_fclose(&file);
-	SD_unmount();
+	//SD_unmount();
 
 	return 0;
 }
