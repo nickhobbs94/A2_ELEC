@@ -37,6 +37,9 @@ alt_32 make_directory(alt_32 argc, char* argv[]);
 alt_32 delete_file(alt_32 argc, char* argv[]);
 alt_32 write_new_file(alt_32 argc, char* argv[]);
 
+alt_32  read_file(alt_32 argc, char* argv[]);
+alt_32  copy_file(alt_32 argc, char* argv[]);
+
 /* ----------------------------------- Functions ----------------------------------- */
 
 /* Print to the LCD */
@@ -271,6 +274,99 @@ alt_32 write_new_file(alt_32 argc, char* argv[]){
 
 	return 0;
 }
+
+alt_32  read_file(alt_32 argc, char* argv[]){
+	EmbeddedFileSystem* efsl;
+	DirList list;
+	File file;
+	euint8 buffer[512];
+	euint16 e,f;
+
+	efsl = *(SD_mount());
+
+	if (efsl==NULL)
+		return -1;
+
+	/* Get absolute path */
+	char path[SD_MAX_PATH_LENGTH];
+	memset(path,'\0',sizeof(path));
+	strcpy(path,argv[1]);
+	if (argc==3){
+		//strcat(path,"/");
+		strcat(path,argv[2]);
+	}
+	if(file_fopen(&file, &(efsl->myFs), path, 'r')!=0){
+				printf("Could not open file for reading\n");
+				return -1;
+	}
+	printf("File opened for reading.\n");
+
+	while((e=file_read(&file,512,buffer))){
+		for(f=0;f<e;f++){
+			printf("%c",buffer[f]);
+		}
+	}
+
+	file_fclose(&file);
+	//SD_unmount();
+
+	return 0;
+}
+
+alt_32 copy_file(alt_32 argc, char* argv[]){
+	EmbeddedFileSystem* efsl;
+	DirList list;
+	File file1, file2;
+	euint8 buffer[512];
+	euint16 e,f;
+
+	efsl = *(SD_mount());
+
+	if (efsl==NULL)
+		return -1;
+
+	/* Get absolute path of read file */
+	char read_file_path[SD_MAX_PATH_LENGTH];
+	memset(read_file_path,'\0',sizeof(read_file_path));
+	strcpy(read_file_path,argv[1]);
+	//strcat(read_file_path,"/");
+	strcat(read_file_path,argv[3]);
+	/* Get absolute path of write file */
+	char write_file_path[SD_MAX_PATH_LENGTH];
+	memset(write_file_path,'\0',sizeof(read_file_path));
+	strcpy(write_file_path,argv[2]);
+	//strcat(write_file_path,"/");
+	strcat(write_file_path,argv[3]);
+
+	if(file_fopen(&file1, &(efsl->myFs), read_file_path, 'r')!=0){
+		printf("Could not open file for reading\n");
+		return -1;
+	}
+	printf("File opened for reading.\n");
+
+	//while(())){
+
+	//}
+	e=file_read(&file1,512,buffer);
+	if(file_fopen(&file2, &(efsl->myFs), write_file_path, 'w')!=0){
+		printf("Could not open file for writing\n");
+		return -1;
+	}
+	printf("File opened for writing.\n");
+
+	if(file_write(&file2,e,buffer)==e){
+		printf("File written.\n");
+	} else {
+		printf("could not write file.\n");
+	}
+
+	file_fclose(&file1);
+	file_fclose(&file2);
+	//SD_unmount();
+
+	return 0;
+}
+
 
 #endif
 
