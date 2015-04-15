@@ -22,8 +22,8 @@ alt_32 command_interpreter(alt_32 argc, alt_8* argv[]);
 
 alt_32 command_interpreter(alt_32 argc, alt_8* argv[]){
 	struct terminal_functions {
-		alt_8* command_string;
-		alt_32 (*command_function)(alt_32 argc, alt_u8* argv[]);
+		char* command_string;
+		alt_32 (*command_function)(alt_32 argc, alt_8* argv[]);
 	} terminal_commands[] = {
 		/* 
 		Enter new terminal funtions below. 
@@ -33,14 +33,20 @@ alt_32 command_interpreter(alt_32 argc, alt_8* argv[]){
 		{"add",add}, 
 		{"ledr",ledr}, 
 		{"switch",switch_function}, 
-		{"ls",lsroot},
+		{"mount",tf_mount},
+		{"unmount",tf_unmount},
+		{"ls",ls_path},
+		{"cd",change_dir},
+		{"mkdir",make_directory},
+		{"del",delete_file},
+		{"wfile",write_new_file},
 		{NULL,NULL} // This null function is to check we've read all the functions, new functions must go above it.
 	};
 	
 	int i;
 	/* loops through the terminal commands and compares to the input arg */
 	for (i=0; terminal_commands[i].command_string != NULL; i++) {
-		if (strcmp(terminal_commands[i].command_string, (char*)argv[0]) == 0){
+		if (strcmp(terminal_commands[i].command_string, argv[0]) == 0){
 			terminal_commands[i].command_function(argc, argv);
 		}
 	}

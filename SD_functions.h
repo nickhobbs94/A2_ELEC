@@ -7,23 +7,17 @@
 #include "ls.h"
 #define SD_MAX_PATH_LENGTH 200
 
-EmbeddedFileSystem* SD_mount();
+EmbeddedFileSystem** SD_mount();
 void SD_unmount(void);
 alt_8 SD_getFileAttribute(alt_u8 input);
 char* SD_getCurrentPath();
-void SD_updatePath(char* currentPath, char argument[]);
+void SD_updatePath(alt_8* currentPath, alt_8 argument[]);
 
-EmbeddedFileSystem* SD_mount(alt_u8 unmount=0){
+EmbeddedFileSystem** SD_mount(){
 	static EmbeddedFileSystem someFileSystem;
 	static EmbeddedFileSystem* someFileSystemPointer;
 
-	/* If unmounting then null the pointer */
-	if (unmount!=0) {
-		someFileSystemPointer = NULL;
-		return &someFileSystem;
-	}
-
-	if (someFileSystemPointer!=NULL) return someFileSystemPointer;
+	if (someFileSystemPointer!=NULL) return &someFileSystemPointer;
 
 	someFileSystemPointer = &someFileSystem;
 	esint8 check;
@@ -35,14 +29,15 @@ EmbeddedFileSystem* SD_mount(alt_u8 unmount=0){
 		printf("Could not init filesystem\n");
 		someFileSystemPointer = NULL;
 	}
-	return someFileSystemPointer;
+	return &someFileSystemPointer;
 }
 
 void SD_unmount(void){
-	EmbeddedFileSystem* efsl;
+	EmbeddedFileSystem** efsl;
 	efsl = SD_mount();
-
-	fs_umount(&(efsl->myFs));
+	fs_umount(&((*efsl)->myFs));
+	*efsl=0;
+	printf("Successfully unmounted the SD card\n");
 }
 
 alt_8 SD_getFileAttribute(alt_u8 input){
@@ -67,7 +62,7 @@ char* SD_getCurrentPath(){
 	return pathPointer;
 }
 
-void SD_updatePath(char* currentPath, char argument[]){
+void SD_updatePath(alt_8* currentPath, alt_8 argument[]){
 	strcpy(currentPath,argument);
 }
 
