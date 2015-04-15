@@ -17,17 +17,18 @@
 #include "LCD_Control.h"
 #include "efs.h"
 #include "ls.h"
+#include "SD_functions.h"
 
 /* Magic numbers */
 #define NUMBER_OF_LEDS 18
 #define BINARY_BITS_IN_DECIMAL(decimalNumber) log2(decimalNumber)+1
-#define LS_MAX_PATHLENGTH 100
 
 /* Function prototypes */
 alt_32 echo(alt_32 argc, alt_8* argv[]);
 alt_32 add(alt_32 argc, alt_8* argv[]);
 alt_32 ledr(alt_32 argc, alt_8* argv[]);
 alt_32 switch_function(alt_32 argc, char* argv[]);
+alt_32 lsroot(alt_32 argc, char* argv[]);
 
 /* ----------------------------------- Functions ----------------------------------- */
 
@@ -97,43 +98,34 @@ alt_32 switch_function(alt_32 argc, char* argv[]){
 }
 
 alt_32 lsroot(alt_32 argc, char* argv[]){
-	EmbeddedFileSystem efsl;
-	DirList* list;
+	EmbeddedFileSystem* efsl;
+	DirList list;
+	
+	efsl = SD_mount();
 
-	esint8 ret;
-	printf("Will init efsl now\n");
-	ret = efs_init(&efsl,"/dev/sda");
-	if (ret==0){
-		printf("Filesystem correctly initialized\n");
-	} else {
-		printf("Could not init filesystem\n");
-	}
+	if (efsl==NULL) return -1;
 
 	/* Get absolute path */
-	char path[LS_MAX_PATHLENGTH];
-	memset(path,'\0',sizeof(path));
-	if (argc<2){
-		strcpy(path,"/");
-	} else {
-		strcpy(path,argv[1]);
-	}
+	char* path;
+	path = SD_getCurrentPath();
 
-	ls_openDir(list,&(efsl.myFs),path);
+	if (argc>1){
+		SD_updatePath(path,argv[1]);
+	}
+	printf("PATH: %s\n",path);
+
+	/* Read directory */
+	ls_openDir(&list,&(efsl->myFs),path);
 	char attribute;
-	while(ls_getNext(list)==0){
-		if ((list->currentEntry.Attribute & 0x10) != 0){
-			attribute='d'; // Directory
-		} else if ((list->currentEntry.Attribute & 0x20) != 0){
-			attribute='f';
-		}
+	while(ls_getNext(&list)==0){
+		attribute = SD_getFileAttribute(list.currentEntry.Attribute);
 		printf("%s \t%c \t(%li)\n",
-				list->currentEntry.FileName,
+				list.currentEntry.FileName,
 				attribute,
-				list->currentEntry.FileSize
+				list.currentEntry.FileSize
 				);
 	}
-
-	fs_umount(&(efsl.myFs));
+	SD_unmount();
 	return 0;
 }
 

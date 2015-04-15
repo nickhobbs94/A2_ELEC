@@ -23,7 +23,7 @@ alt_32 command_interpreter(alt_32 argc, alt_8* argv[]);
 alt_32 command_interpreter(alt_32 argc, alt_8* argv[]){
 	struct terminal_functions {
 		alt_8* command_string;
-		alt_32 (*command_function)(alt_32 argc, alt_8* argv[]);
+		alt_32 (*command_function)(alt_32 argc, alt_u8* argv[]);
 	} terminal_commands[] = {
 		/* 
 		Enter new terminal funtions below. 
