@@ -1,7 +1,7 @@
 #ifndef LCD_CONTROL_H
 #define LCD_CONTROL_H
 #include <stdio.h>
-#include <string.h>
+#include "altstring.h"
 #include <unistd.h>  // for usec()
 #include "alt_types.h"
 #include "system.h"
@@ -16,7 +16,7 @@
 #define MAX_DECIMAL_DIGITS_32BIT_NUM 10
 //-------------------------------------------------------------------------
 void  LCD_Init();
-void  LCD_Show_Text(char* Text);
+void  LCD_Show_Text(alt_8* Text);
 void  LCD_Line2();
 void  LCD_Test();
 void  LCD_Show_Decimal(alt_32 input);
@@ -40,17 +40,17 @@ void LCD_Init() {
   usleep(2000);
 }
 
-void LCD_Show_Text(char* Text) {
+void LCD_Show_Text(alt_8* Text) {
   int i;
-  for(i=0;i<strlen(Text);i++) {
+  for(i=0;i<altstrlen(Text);i++) {
     lcd_write_data(LCD_16207_0_BASE,Text[i]);
     usleep(2000);
   }
 }
 
 void  LCD_Show_Decimal(alt_32 input){
-	char string[MAX_DECIMAL_DIGITS_32BIT_NUM+1];
-	char* outputstring;
+	alt_8 string[MAX_DECIMAL_DIGITS_32BIT_NUM+1];
+	alt_8* outputstring;
 	alt_32 i;
 	//alt_32 j=0;
 	string[MAX_DECIMAL_DIGITS_32BIT_NUM]='\0';

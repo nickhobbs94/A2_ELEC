@@ -12,7 +12,7 @@
 #include "LCD_Control.h"
 
 /* Magic numbers */
-#define PUTTY_LINE_LENGTH 50   // max line length able to be entered into putty
+#define PUTTY_LINE_LENGTH 150   // max line length able to be entered into putty
 #define BACKSPACE 0x7f
 
 /* Function prototypes */

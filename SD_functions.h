@@ -3,7 +3,7 @@
 
 /* Includes */
 #include <stdio.h>
-#include <string.h>
+#include "altstring.h"
 #include "alt_types.h"
 #include "efs.h"
 #include "ls.h"
@@ -16,7 +16,7 @@
 EmbeddedFileSystem** SD_mount();
 void SD_unmount(void);
 alt_8 SD_getFileAttribute(alt_u8 input);
-char* SD_getCurrentPath();
+alt_8* SD_getCurrentPath();
 void SD_updatePath(alt_8* currentPath, alt_8 argument[]);
 
 /* ------------------------- Functions -------------------------- */
@@ -62,13 +62,13 @@ alt_8 SD_getFileAttribute(alt_u8 input){
 }
 
 /* Get the path of the current directory */
-char* SD_getCurrentPath(){
-	static char path[SD_MAX_PATH_LENGTH];
-	static char* pathPointer;
+alt_8* SD_getCurrentPath(){
+	static alt_8 path[SD_MAX_PATH_LENGTH];
+	static alt_8* pathPointer;
 	if (pathPointer != NULL) return pathPointer;
 
-	memset(path,'\0',sizeof(path));
-	strcpy(path,"/");
+	altmemset(path,'\0',sizeof(path));
+	altstrcpy(path,(alt_8*)"/");
 	pathPointer = path;
 
 	return pathPointer;
@@ -77,12 +77,12 @@ char* SD_getCurrentPath(){
 /* Update the path given */
 void SD_updatePath(alt_8* currentPath, alt_8 argument[]){
 	if (argument[0]=='/'){
-		strcpy(currentPath,argument);
+		altstrcpy(currentPath,argument);
 	} else {
-		if (currentPath[strlen(currentPath)-1] != '/'){
-			strcat(currentPath,"/");
+		if (currentPath[altstrlen(currentPath)-1] != '/'){
+			altstrcat(currentPath,(alt_8*)"/");
 		}
-		strcat(currentPath,argument);
+		altstrcat(currentPath,argument);
 	}
 }
 

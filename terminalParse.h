@@ -6,7 +6,7 @@ terminalParse.h
 
 /* Includes */
 #include <stdio.h>
-#include <string.h>
+#include "altstring.h"
 #include <stdlib.h>
 #include "terminalFunctions.h"
 #include "alt_types.h"
@@ -38,7 +38,7 @@ alt_32 command_interpreter(alt_32 argc, alt_8* argv[]){
 		{"ls",ls_path},
 		{"cd",change_dir},
 		{"mkdir",make_directory},
-		{"del",delete_file},
+		{"rm",delete_file},
 		{"mkfile",write_new_file},
 		{"cp",copy_file},
 		{"cat",read_file},
@@ -48,7 +48,7 @@ alt_32 command_interpreter(alt_32 argc, alt_8* argv[]){
 	int i;
 	/* loops through the terminal commands and compares to the input arg */
 	for (i=0; terminal_commands[i].command_string != NULL; i++) {
-		if (strcmp(terminal_commands[i].command_string, argv[0]) == 0){
+		if (altstrcmp(terminal_commands[i].command_string, argv[0]) == 0){
 			terminal_commands[i].command_function(argc, argv);
 		}
 	}
@@ -65,8 +65,8 @@ alt_8 string_parser(alt_8* string, alt_8* array_of_words[]){
 	if (*(string)=='\0'){
 		return 0;   // return 0 if empty string
 	}
-	alt_8 count = 0;
-	alt_32 string_length = strlen(string);
+	alt_u8 count = 0;
+	alt_32 string_length = altstrlen(string);
 	
 	if (*(string)!=' '){	// if the first character is not a space then start the first word there
 		count++;

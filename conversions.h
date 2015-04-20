@@ -7,7 +7,6 @@
 
 /* Includes */
 #include <math.h>
-#include <string.h>
 #include "alt_types.h"
 
 /* Magic numbers */
@@ -34,7 +33,7 @@ alt_32 intfromstring(alt_8 string[]) {
 		string+=1;
 	}
 	
-	alt_32 stringlength = strlen((char*)string);
+	alt_32 stringlength = altstrlen(string);
 	alt_32 i;
 	
 	
