@@ -52,12 +52,23 @@ void  LCD_Show_Decimal(alt_32 input){
 	alt_8 string[MAX_DECIMAL_DIGITS_32BIT_NUM+1];
 	alt_8* outputstring;
 	alt_32 i;
+	alt_8 isNegative = 0;
+
+	if (input <0){
+		input = input * -1;
+		isNegative = 1;
+	}
+
 	//alt_32 j=0;
 	string[MAX_DECIMAL_DIGITS_32BIT_NUM]='\0';
 	for (i=MAX_DECIMAL_DIGITS_32BIT_NUM-1; i>=0; i--){
 		string[i]=charfromint(input%10);
 		input=input/10;
 		if (input==0) {
+			if (isNegative && i>0){
+				i--;
+				string[i] = '-';
+			}
 			outputstring = string+i;
 			i=-1;
 		}

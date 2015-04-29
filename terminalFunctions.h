@@ -22,6 +22,7 @@
 /* Magic numbers */
 #define NUMBER_OF_LEDS 18
 #define BINARY_BITS_IN_DECIMAL(decimalNumber) log2(decimalNumber)+1
+#define MAX_LED_REGISTER 0x3ffff
 
 /* Function prototypes */
 alt_32 echo(alt_32 argc, alt_8* argv[]);
@@ -35,8 +36,8 @@ alt_32 tf_unmount(alt_32 argc, alt_8* argv[]);
 alt_32 make_directory(alt_32 argc, alt_8* argv[]);
 alt_32 delete_file(alt_32 argc, alt_8* argv[]);
 alt_32 write_new_file(alt_32 argc, alt_8* argv[]);
-alt_32  read_file(alt_32 argc, alt_8* argv[]);
-alt_32  copy_file(alt_32 argc, alt_8* argv[]);
+alt_32 read_file(alt_32 argc, alt_8* argv[]);
+alt_32 copy_file(alt_32 argc, alt_8* argv[]);
 
 /* ----------------------------------- Functions ----------------------------------- */
 
@@ -85,7 +86,11 @@ alt_32 ledr(alt_32 argc, alt_8* argv[]){
 	}
 	alt_32 dec=0;
 	dec = intfromstring(argv[1]);
-	if (dec == 0 && (altstrcmp( argv[1], (alt_8*)"0" ) != 0)){
+
+	/* Return from the program if input wasn't a number or bigger than the max for the LEDs*/
+	if ((dec == 0 && (altstrcmp(argv[1], (alt_8*)"0") != 0))
+	|| dec > MAX_LED_REGISTER){
+		printf("Argument 1 for ledr is invalid: %s\n", argv[1]);
 		return -1;
 	}
 	IOWR(LED_RED_BASE, 0, dec);

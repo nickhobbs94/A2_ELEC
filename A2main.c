@@ -49,20 +49,24 @@ alt_32 puttyGetline(alt_8 string[], alt_32 lineLength){
 			write(uart_pointer,&string[i],1);
 			string[i]='\r';
 			write(uart_pointer,&string[i],1);
+			i++;
 		} 
 		
 		/* Interpret backspaces correctly in the string by decrementing i */
 		else if (string[i]==BACKSPACE){
-			write(uart_pointer,&string[i],1);
-			i=i-2;
+			if (i>0){
+				write(uart_pointer,&string[i],1);
+				i=i-1;
+			}
 		} 
 		
 		/* Echo everything else */
 		else {
 			write(uart_pointer,&string[i],1);
+			i++;
 		}
-		
-		i++;
+		//printf("i is %d\nstring is %s\n",i,string);
+
 	} while(string[i-1]!='\r' && i<lineLength); // loop until newline or line length is reached
 	
 	string[i-1]='\0'; // null terminate the string

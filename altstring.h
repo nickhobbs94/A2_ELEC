@@ -34,12 +34,15 @@ alt_8* altstrcpy(alt_8* destination, alt_8* source){
 }
 
 alt_32 altstrcmp(alt_8* string1, alt_8* string2){
-	alt_32 sum = 0;
 	while (*string1 != '\0' && *string2 != '\0'){
-		sum = (alt_32) (*string1++ - *string2++);
-		if (sum != 0) return sum;
+		if (*string1 != *string2){
+			return -1;
+		}
+		string1++;
+		string2++;
 	}
-	return sum;
+	if (*string1 != *string2) return -1;
+	return 0;
 }
 
 alt_8* altstrcat(alt_8* destination, alt_8* source){
