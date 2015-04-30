@@ -9,6 +9,7 @@ altstring.h
 
 /* Magic numbers */
 #define MAX_STRINGLEN 200
+
 /* Function prototypes */
 alt_8* altstrcpy(alt_8* destination, alt_8* source);
 alt_32 altstrcmp(alt_8* string1, alt_8* string2);
@@ -16,7 +17,7 @@ alt_32 altstrlen(alt_8* string);
 /* ------------------------- Functions -------------------------- */
 alt_32 altstrlen(alt_8* string){
 	alt_32 i;
-	for (i=0; i<MAX_STRINGLEN && string[i]!='\0';i++){
+	for (i=0; i<MAX_STRINGLEN && string[i]!='\0'; i++){
 		;
 	}
 	return i;
@@ -36,12 +37,16 @@ alt_8* altstrcpy(alt_8* destination, alt_8* source){
 alt_32 altstrcmp(alt_8* string1, alt_8* string2){
 	while (*string1 != '\0' && *string2 != '\0'){
 		if (*string1 != *string2){
-			return -1;
+			break;
 		}
 		string1++;
 		string2++;
 	}
-	if (*string1 != *string2) return -1;
+	if (*string1 < *string2){
+		return -1;
+	} else if (*string1 > *string2){
+		return 1;
+	}
 	return 0;
 }
 

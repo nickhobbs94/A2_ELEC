@@ -47,7 +47,7 @@ void SD_unmount(void){
 	efsl = SD_mount();
 	fs_umount(&((*efsl)->myFs));
 	*efsl=0;
-	printf("Successfully unmounted the SD card\n");
+	printf("Unmounted the SD card\n");
 }
 
 /* Tell whether the current entry is a directory or a file */
@@ -84,6 +84,12 @@ void SD_updatePath(alt_8* currentPath, alt_8 argument[]){
 		}
 		altstrcat(currentPath,argument);
 	}
+}
+
+void puttyPrintLine(alt_8 string[]){
+	alt_32 uart_pointer = open("/dev/uart_0", O_WRONLY);
+	write(uart_pointer, string, altstrlen(string));
+	close(uart_pointer);
 }
 
 #endif

@@ -8,10 +8,14 @@
 /* Includes */
 #include <math.h>
 #include "alt_types.h"
+#include "altstring.h"
 
 /* Magic numbers */
 #define BINARY_DIVISOR 2
 #define HEX_DIVISOR 16
+#define LARGEST_POSITIVE_INT "2147483647"
+#define ABS_SMALLEST_NEGATIVE_INT "2147483648"
+#define MAX_NUM_STRINGLEN 10
 
 /* Function prototypes */
 alt_32 intfromstring(alt_8 string[]);
@@ -23,16 +27,27 @@ alt_8 charfromint(alt_32 number);
 
 alt_32 intfromstring(alt_8 string[]) {
 	alt_32 result=0;
-	alt_8 negative_flag = 0;
+	alt_8 isPositive = 1;
 	
 	/* If the string starts with a + or - then increment the pointer of the string so as to ignore it */
 	if (string[0]=='+'){
 		string+=1;
 	} else if (string[0]=='-'){
-		negative_flag = 1;
+		isPositive = 0;
 		string+=1;
 	}
 	
+	/* Check that the string to be converted is not larger than can be stored in a 32 bit signed int */
+	if (altstrlen(string) == MAX_NUM_STRINGLEN){
+		if (altstrcmp(string, LARGEST_POSITIVE_INT) > 0 && isPositive){
+			return 0;
+		} else if (altstrcmp(string, ABS_SMALLEST_NEGATIVE_INT) > 0 && !isPositive){
+			return 0;
+		}
+	} else if (altstrlen(string) > MAX_NUM_STRINGLEN){
+		return 0;
+	}
+
 	alt_32 stringlength = altstrlen(string);
 	alt_32 i;
 	
@@ -46,7 +61,7 @@ alt_32 intfromstring(alt_8 string[]) {
 	}
 	
 	/* Interpret sign */
-	if (negative_flag == 1){
+	if (!isPositive){
 		result = result * -1;
 	}
 	

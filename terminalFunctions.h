@@ -18,11 +18,13 @@
 #include "efs.h"
 #include "ls.h"
 #include "SD_functions.h"
+#include "altstring.h"
 
 /* Magic numbers */
 #define NUMBER_OF_LEDS 18
 #define BINARY_BITS_IN_DECIMAL(decimalNumber) log2(decimalNumber)+1
-#define MAX_LED_REGISTER 0x3ffff
+#define MAX_LED_REGISTER 131071
+#define MIN_LED_REGISTER -131072
 
 /* Function prototypes */
 alt_32 echo(alt_32 argc, alt_8* argv[]);
@@ -48,10 +50,12 @@ alt_32 echo(alt_32 argc, alt_8* argv[]){
 
 	/* Loop over each argument provided to the function and print each one to the LCD and console */
 	for (i=1; i<argc; i++){
-		printf("%s \n",argv[i]);
+		puttyPrintLine(argv[i]);
+		puttyPrintLine(" ");
 		LCD_Show_Text(argv[i]);
 		LCD_Show_Text((alt_8*) " ");
 	}
+	puttyPrintLine("\n");
 	return 0;
 }
 
@@ -60,21 +64,38 @@ alt_32 add(alt_32 argc, alt_8* argv[]){
 	alt_32 sum = 0;
 	alt_32 i;
 	alt_32 temp;
+	alt_32 tempsum;
 	LCD_Init();
+	alt_8 printstring[MAX_STRINGLEN];
+	altmemset(printstring, '\0', MAX_STRINGLEN);
 
 	for (i=1; i<argc; i++){
 		/* Print each argument */
-		LCD_Show_Text(argv[i]);
+		altstrcat(printstring, argv[i]);
+
 		/* Print a trailing '+' for all but the last argument */
-		if (i<argc-1) LCD_Show_Text((alt_8*)"+");
+		if (i<argc-1) {
+			altstrcat(printstring, "+");
+		}
 
 		/* Get an int from each arg and add it to temp */
 		temp = intfromstring(argv[i]);
-		sum += temp;
+		if (temp == 0 && argv[i][0]!='0' && (argv[i][0]!='-' || argv[i][1]!='0') ){
+			puttyPrintLine("Invalid input: not a valid integer\n");
+			return -1;
+		}
+		tempsum = temp + sum;
+		/* Check for signed overflow */
+		if (temp > 0 && sum > 0 && tempsum < 0){
+			puttyPrintLine("Addition overflow\n");
+			return -1;
+		} else if (temp < 0 && sum < 0 && tempsum >= 0){
+			puttyPrintLine("Signed addition overflow\n");
+			return -1;
+		}
+		sum = tempsum;
 	}
-	//printf("%d\n",(int)sum);
-	LCD_Line2();
-	LCD_Show_Text((alt_8*)"=");
+	printf("%s=%d\n", printstring, sum);
 	LCD_Show_Decimal(sum);
 	return 0;
 }
@@ -89,8 +110,10 @@ alt_32 ledr(alt_32 argc, alt_8* argv[]){
 
 	/* Return from the program if input wasn't a number or bigger than the max for the LEDs*/
 	if ((dec == 0 && (altstrcmp(argv[1], (alt_8*)"0") != 0))
-	|| dec > MAX_LED_REGISTER){
-		printf("Argument 1 for ledr is invalid: %s\n", argv[1]);
+	|| dec > MAX_LED_REGISTER || dec < MIN_LED_REGISTER){
+		puttyPrintLine("Argument 1 for ledr is invalid: ");
+		puttyPrintLine(argv[1]);
+		puttyPrintLine("\n");
 		return -1;
 	}
 	IOWR(LED_RED_BASE, 0, dec);
@@ -119,6 +142,7 @@ alt_32 switch_function(alt_32 argc, alt_8* argv[]){
 alt_32 ls_path(alt_32 argc, alt_8* argv[]){
 	EmbeddedFileSystem* efsl;
 	DirList list;
+	alt_8 isEmptyDir = 1;
 	
 	efsl = *(SD_mount());
 
@@ -143,12 +167,17 @@ alt_32 ls_path(alt_32 argc, alt_8* argv[]){
 
 	char attribute;
 	while(ls_getNext(&list)==0){
+		isEmptyDir = 0;
 		attribute = SD_getFileAttribute(list.currentEntry.Attribute);
 		printf("%s \t%c \t(%li)\n",
 				list.currentEntry.FileName,
 				attribute,
 				list.currentEntry.FileSize
 				);
+	}
+
+	if (isEmptyDir){
+		printf("The directory is empty\n");
 	}
 	//SD_unmount();
 	return 0;
@@ -212,7 +241,7 @@ alt_32 make_directory(alt_32 argc, alt_8* argv[]){
 
 	check = makedir(&(efsl->myFs), path);
 	if (check != 0){
-		printf("This directory already exists\n");
+		puttyPrintLine("This directory already exists\n");
 	}
 
 	//SD_unmount();
@@ -231,8 +260,9 @@ alt_32 delete_file(alt_32 argc, alt_8* argv[]){
 
 	efsl = *(SD_mount());
 
-	if (efsl==NULL)
+	if (efsl==NULL){
 		return -1;
+	}
 
 	/* Get absolute path */
 	alt_8 path[SD_MAX_PATH_LENGTH];
@@ -240,7 +270,12 @@ alt_32 delete_file(alt_32 argc, alt_8* argv[]){
 	SD_updatePath(path,argv[1]);
 
 	/* Remove the file */
-	rmfile(&(efsl->myFs), (alt_u8*)path);
+	alt_16 result = rmfile(&(efsl->myFs), (alt_u8*)path);
+
+	if(result == -1){
+		puttyPrintLine("Error: file does not exist\n");
+	}
+
 	return 0;
 }
 
@@ -268,15 +303,15 @@ alt_32 write_new_file(alt_32 argc, alt_8* argv[]){
 	SD_updatePath(path,argv[1]);
 
 	if(file_fopen(&file, &(efsl->myFs), path, 'w')!=0){
-				printf("Could not open file for writing\n");
+				puttyPrintLine("Could not open file for writing\n");
 				return 0;
 	}
-	printf("File opened for writing.\n");
+	puttyPrintLine("File opened for writing.\n");
 
 	if(file_write(&file,altstrlen((alt_8*)write_buffer),(alt_u8*)write_buffer) == altstrlen((alt_8*)write_buffer)){
-		printf("File written.\n");
+		puttyPrintLine("File written.\n");
 	} else {
-		printf("could not write file.\n");
+		puttyPrintLine("Could not write file.\n");
 	}
 
 	file_fclose(&file);
@@ -301,7 +336,7 @@ alt_32  read_file(alt_32 argc, alt_8* argv[]){
 	SD_updatePath(path,argv[1]);
 
 	if(file_fopen(&file, &(efsl->myFs), path, 'r')!=0){
-				printf("Could not open file for reading\n");
+				puttyPrintLine("Could not open file for reading\n");
 				return -1;
 	}
 	printf("File %s opened for reading.\n",path);
@@ -339,22 +374,22 @@ alt_32 copy_file(alt_32 argc, alt_8* argv[]){
 	SD_updatePath(write_file_path,argv[2]);
 
 	if(file_fopen(&file1, &(efsl->myFs), read_file_path, 'r')!=0){
-		printf("Could not open file for reading\n");
+		puttyPrintLine("Could not open file for reading\n");
 		return -1;
 	}
-	printf("File opened for reading.\n");
+	puttyPrintLine("File opened for reading.\n");
 
 	e=file_read(&file1,512,buffer);
 	if(file_fopen(&file2, &(efsl->myFs), write_file_path, 'w')!=0){
-		printf("Could not open file for writing\n");
+		puttyPrintLine("Could not open file for writing\n");
 		return -1;
 	}
-	printf("File opened for writing.\n");
+	puttyPrintLine("File opened for writing.\n");
 
 	if(file_write(&file2,e,buffer)==e){
-		printf("File written.\n");
+		puttyPrintLine("File written.\n");
 	} else {
-		printf("could not write file.\n");
+		puttyPrintLine("could not write file.\n");
 	}
 
 	file_fclose(&file1);
